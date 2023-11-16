@@ -7,11 +7,11 @@ using Vector3 = UnityEngine.Vector3;
 public class Player : MonoBehaviour
 {
     // Boundaries of the room
-    private float _roomBoundariesPositiveX = 1.3f;
-    private float _roomBoundariesNegativeX = -5.3f;
-    private float _roomBoundariesY = 2.7f; // Height of a Player
-    private float _roomBoundariesPositiveZ = -1.15f;
-    private float _roomBoundariesNegativeZ = -6.0f;
+    private float _roomBoundariesPositiveX = 0.75f;
+    private float _roomBoundariesNegativeX = -5.4f;
+    private float _roomBoundariesY = 2.6f; // Height of a Player
+    private float _roomBoundariesPositiveZ = -1.6f;
+    private float _roomBoundariesNegativeZ = -5.8f;
 
     // Speed of movement
     public static float movementSpeed;
@@ -42,17 +42,16 @@ public class Player : MonoBehaviour
 
     void Start()
     {
-        // Put the player to starting position (-1.75f, 2.7f, -6.0f)
-        transform.position = new Vector3(-1.75f, 2.7f, -6.0f);
-
+        // Put the player to starting position
+        transform.position = new Vector3(0.0f, _roomBoundariesY, _roomBoundariesNegativeZ);
+        // Player stand still at the beginning
         StopMovement.isStopped = true;
-
         movementSpeed = 0.0f;
     }
 
     private void Update()
     {
-        defaultMovementSpeed = Random.Range(2.0f, 6.0f); // Simulate the human movement
+        defaultMovementSpeed = Random.Range(2.0f, 6.0f); // Simulate the human movement, so the speed will not be the same all the time
         CalculateMovement(); // Calculate movement for Player
     }
 
@@ -64,15 +63,16 @@ public class Player : MonoBehaviour
         // If game just started, the movementSpeed remains the same as default 
         if (listOfActions.Last() == "stop" && listOfActions[listOfActions.Count - 2] == "start")
         {
-            movementSpeed = defaultMovementSpeed; // Default movement speed of a player
+            movementSpeed = defaultMovementSpeed; // set default movement speed of a player
         }
 
         // Movements management:
         // Checking whether the previous movement and movement before the stop not what you trying to do,
-        // and execute it according to the direction of key pressed
+        //so if gamer will press forward and then backward (or right and then left) nothing will happen,
+        //and execute movement according to the direction of key pressed
         //
         // W ==> Forward
-        if (Input.GetKeyDown(KeyCode.W))
+        if (Input.GetKeyDown(KeyCode.W) == true)
         {
             if (listOfActions.Last() != "backward" && listOfActions.Last() != "forward")
             {
@@ -103,7 +103,7 @@ public class Player : MonoBehaviour
         }
 
         // S ==> Backward
-        if (Input.GetKeyDown(KeyCode.S))
+        if (Input.GetKeyDown(KeyCode.S) == true)
         {
             if (listOfActions.Last() != "forward" && listOfActions.Last() != "backward")
             {
@@ -134,7 +134,7 @@ public class Player : MonoBehaviour
         }
 
         // A ==> LEFT
-        if (Input.GetKeyDown(KeyCode.A))
+        if (Input.GetKeyDown(KeyCode.A) == true)
         {
             if (listOfActions.Last() != "left" && listOfActions.Last() != "right")
             {
@@ -165,7 +165,7 @@ public class Player : MonoBehaviour
         }
 
         // D ==> RIGHT on X axis
-        if (Input.GetKeyDown(KeyCode.D))
+        if (Input.GetKeyDown(KeyCode.D) == true)
         {
             if (listOfActions.Last() != "right" && listOfActions.Last() != "left")
             {
@@ -196,7 +196,7 @@ public class Player : MonoBehaviour
         }
 
         // Stop moving)
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) == true)
         {
             if (listOfActions.Last() != "stop")
             {
@@ -212,7 +212,7 @@ public class Player : MonoBehaviour
         }
 
         // Jump
-        if (Input.GetKeyDown(KeyCode.Space))
+        if (Input.GetKeyDown(KeyCode.Space) == true && _jump == false)
         {
             _moveRight = false;
             _moveLeft = false;
@@ -226,7 +226,7 @@ public class Player : MonoBehaviour
         }
 
         // Handle cases when player was paused / stopped
-        if (_moveRight)
+        if (_moveRight == true)
         {
             if (movementSpeed != 0)
             {
@@ -234,7 +234,7 @@ public class Player : MonoBehaviour
                 MovingIn(move);
             }
         }
-        if (_moveLeft) 
+        if (_moveLeft == true) 
         {
             if (movementSpeed != 0)
             {
@@ -242,7 +242,7 @@ public class Player : MonoBehaviour
                 MovingIn(move);
             }
         }
-        if (_moveForward)
+        if (_moveForward == true)
         {
             if (movementSpeed != 0)
             {
@@ -250,7 +250,7 @@ public class Player : MonoBehaviour
                 MovingIn(move);
             }
         }
-        if (_moveBackward)
+        if (_moveBackward == true)
         {
             if (movementSpeed != 0)
             {
@@ -265,6 +265,7 @@ public class Player : MonoBehaviour
             transform.Translate(moving * Time.deltaTime);
         }
 
+        // X axis
         if (transform.position.x > _roomBoundariesPositiveX)
         {
             transform.position = new Vector3(_roomBoundariesPositiveX, transform.position.y, transform.position.z);
@@ -274,6 +275,7 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(_roomBoundariesNegativeX, transform.position.y, transform.position.z);
         }
 
+        // Y axis
         if (transform.position.y > _roomBoundariesY)
         {
             transform.position = new Vector3(transform.position.x, _roomBoundariesY, transform.position.z);
@@ -283,6 +285,7 @@ public class Player : MonoBehaviour
             transform.position = new Vector3(transform.position.x, _roomBoundariesY, transform.position.z);
         }
 
+        // Z axis
         if (transform.position.z > _roomBoundariesPositiveZ)
         {
             transform.position = new Vector3(transform.position.x, transform.position.y, _roomBoundariesPositiveZ);

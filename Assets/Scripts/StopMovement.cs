@@ -7,7 +7,7 @@ public class StopMovement : MonoBehaviour
     // Update is called once per frame
     private void Update()
     {
-        if (isStopped)
+        if (isStopped == true)
         { 
             MovementIsStopped();
         }

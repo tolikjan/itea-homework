@@ -3,8 +3,20 @@ using UnityEngine;
 
 public class SwingTheWeapon : MonoBehaviour
 {
-    public Vector3 defaultRotationAngle = new Vector3(12.45f, 229.74f, 0f);
-    public Vector3 desiredRotationAngle = new Vector3(14.87f, 273.61f, -31.35f); // The angle to rotate by
+    // Rotation angles of weapon
+    private static float _eulerAngleX;
+    private static float _eulerAngleY;
+    private static float _eulerAngleZ;
+
+    public Vector3 defaultRotationAngle = new Vector3(_eulerAngleX, _eulerAngleY, _eulerAngleZ);
+
+    // The angles to rotate by
+    [SerializeField] public static float desiredRotationAngleX = -15.0f;
+    [SerializeField] public static float desiredRotationAngleY = -80.0f;
+    [SerializeField] public static float desiredRotationAngleZ = -40.0f;
+
+    public Vector3 desiredRotationAngles =
+        new Vector3(desiredRotationAngleX, desiredRotationAngleY, desiredRotationAngleZ);
 
     public float rotationSpeed = 0.1f; // Speed of the weapon rotation
 
@@ -22,13 +34,17 @@ public class SwingTheWeapon : MonoBehaviour
 
     void Update()
     {
+        _eulerAngleX = transform.localEulerAngles.x;
+        _eulerAngleY = transform.localEulerAngles.y;
+        _eulerAngleZ = transform.localEulerAngles.z;
+        
         // Check if the left mouse button is clicked
-        if (Input.GetMouseButtonDown(0) && !isRotating)
+        if (Input.GetMouseButtonDown(0) == true && isRotating == false)
         {
             // Start the weapon rotation towards the desired angle
-            StartCoroutine(RotateObject(desiredRotationAngle, rotationSpeed / 2));
+            StartCoroutine(RotateObject(desiredRotationAngles, rotationSpeed));
         }
-        else if (transform.rotation != Quaternion.Euler(defaultRotationAngle) && !isRotating)
+        else if (transform.rotation != Quaternion.Euler(defaultRotationAngle) && isRotating == false)
         {
             // Gradually return to the default rotation
             StartCoroutine(RotateObject(defaultRotationAngle, rotationSpeed)); // Slower return to default
